@@ -1,0 +1,7 @@
+mcmcplots
+.DS_Store
+initiation_Rhat.RDS
+initiation_temp_JAGS_model_GOF_10_19.RDS
+initiation_temp_JAGS_model_samples_10_19.RDS
+initiation_temp_JAGS_model_summary_10_19.RDS
+mcmcplots.zip
