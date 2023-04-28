@@ -1,0 +1,20 @@
+"","Measurement_ID","Azimuth","Segment","Tree_species","Struc_class","DBH","Height","CBH","PCD","Fire_scar","Center_tree","Crwn_perc_uncompressed","Crwn_perc_green","Crwn_perc_brown","Crwn_perc_black","Bole_scorch_low","Bole_scorch_high","Perc_bole_black","Comments","dist","DBH2"
+"1","EMPAID_J09_2012",90,2,"PICO",5,32,0.2,NA,NA,NA,"N",NA,NA,NA,NA,NA,NA,NA,"DIST 0.75M",0.75,24.353
+"2","EMPAID_J10_2012",270,4,"PICO",5,32,0.1,NA,NA,NA,"N",NA,NA,NA,NA,NA,NA,NA,"DIST 0.52M",0.52,24.353
+"3","EMFWOR_BGCT2-08_2015",90,2,"PIPO",5,54,0.15,NA,NA,NA,"N",NA,NA,NA,NA,NA,NA,NA,"dist from transect =7.6 m, no bark",7.6,43.713
+"4","EMFWOR_BGCT2-08_2015",90,2,"PIPO",5,52,0.28,NA,NA,NA,"N",NA,NA,NA,NA,NA,NA,NA,"dist from transect =4.28 m, no bark",4.28,41.953
+"5","EMPAID_I07_2012",270,4,"PIPO",5,61,0.28,NA,NA,NA,"N",NA,NA,NA,NA,NA,NA,NA,"dist 4.82m",4.82,49.873
+"6","EMPAID_I08_2012",0,1,"PIPO",5,36.7000007629395,0.25,NA,NA,NA,"N",NA,NA,NA,NA,NA,NA,NA,"DIST .27M",27,28.4890006713868
+"7","EMPAID_J06_2012",180,3,"PSMEG",5,50.5,0.18,NA,NA,NA,"N",NA,NA,NA,NA,NA,NA,NA,"DIST 3.01M",3.01,42.0805
+"8","EMPAID_J07_2012",0,1,"PSMEG",5,59.2000007629395,0.2,NA,NA,NA,"N",NA,NA,NA,NA,NA,NA,NA,"DIST 4.5M",4.5,49.5016006507874
+"9","EMPAID_LC06_2013",160,3,"PIPO",5,60,NA,NA,NA,NA,"N",NA,NA,NA,NA,NA,NA,NA,"Dbh (52cm) estimated from stump (60cm) via veg photo (JGD), >3m from line",52,48.993
+"10","EMPAID_LC06_2013",160,3,"PIPO",5,60,NA,NA,NA,NA,"N",NA,NA,NA,NA,NA,NA,NA,"Dbh (52cm) estimated from stump (60cm) via veg photo (JGD), >3m from line",52,48.993
+"11","EMPAID_LC06_2013",160,3,"PIPO",5,56,NA,NA,NA,NA,"N",NA,NA,NA,NA,NA,NA,NA,"Dbh (44cm) estimated from stump (56cm) via veg photo (JGD), <3m from line",44,45.473
+"12","EMPAID_LC06_2013",160,3,"PIPO",5,34,NA,NA,NA,NA,"N",NA,NA,NA,NA,NA,NA,NA,"Dbh (26cm) estimated from stump (34cm) via veg photo (JGD), <3m from line",26,26.113
+"13","EMPAID_T04_2012",270,4,"PIPO",5,52.6024513244629,NA,NA,NA,NA,"N",NA,NA,NA,NA,NA,NA,NA,"Remove from pre data?  Likely too small in 2013",2013,42.4831571655273
+"14","EMPAID_T04_2012",270,4,"PIPO",5,51.6024055480957,NA,NA,NA,NA,"N",NA,NA,NA,NA,NA,NA,NA,"Remove from pre data?  Likely too small in 2013",2013,41.6031168823242
+"15","EMPAID_T04_2012",180,3,"PIPO",5,51.0023765563965,NA,NA,NA,NA,"N",NA,NA,NA,NA,NA,NA,NA,"Remove from pre data?  Likely too small in 2013",2013,41.0750913696289
+"16","EMPAID_T06_2012",270,4,"PIPO",5,51.2023849487305,NA,NA,NA,NA,"N",NA,NA,NA,NA,NA,NA,NA,"Remove from pre data?  Likely too small in 2013",2013,41.2510987548828
+"17","EMPAID_T06_2012",180,3,"PIPO",5,52.4024429321289,NA,NA,NA,NA,"N",NA,NA,NA,NA,NA,NA,NA,"Remove from pre data?  Likely too small in 2013",2013,42.3071497802734
+"18","EMPAID_T07_2012",270,4,"PIPO",5,53.3024826049805,NA,NA,NA,NA,"N",NA,NA,NA,NA,NA,NA,NA,"Remove from pre data?  Likely too small in 2013",2013,43.0991846923828
+"19","EMPAID_T07_2012",270,4,"PIPO",5,51.5023994445801,NA,NA,NA,NA,"N",NA,NA,NA,NA,NA,NA,NA,"Remove from pre data?  Likely too small in 2013",2013,41.5151115112305
