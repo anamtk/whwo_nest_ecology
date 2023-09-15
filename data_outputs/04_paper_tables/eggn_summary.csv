@@ -1,0 +1,22 @@
+parameter,beta_50,beta_lower,beta_upper,p,category
+Treatment type: Burn,0.07,-0.42,0.53,0.38,Nest management (2.25 ha)
+Treatment type: Harvest,0.21,-0.13,0.56,0.11,Nest management (2.25 ha)
+Treatment type: Harvest&Burn,0.03,-0.53,0.57,0.46,Nest management (2.25 ha)
+Percent of landscape harvested,-0.06,-0.22,0.10,0.22,Landscape management (314 ha)
+Percent of landscape burned,0.01,-0.18,0.20,0.46,Landscape management (314 ha)
+Nest initiation day,-0.04,-0.14,0.05,0.19,Nest habitat
+Large tree density,0.01,-0.29,0.34,0.45,Local habitat (0.4 ha)
+Small tree density,0.04,-0.26,0.41,0.36,Local habitat (0.4 ha)
+Percent ponderosa forest,-0.03,-0.13,0.08,0.31,Local habitat (0.4 ha)
+Forest patch size coeff. variation,0.03,-0.08,0.15,0.27,Landscape habitat (314 ha)
+Contagion index,-0.01,-0.15,0.12,0.43,Landscape habitat (314 ha)
+Largest patch index,-0.02,-0.13,0.10,0.39,Landscape habitat (314 ha)
+Number of open patches,-0.02,-0.13,0.08,0.34,Landscape habitat (314 ha)
+Maximum temperature,0.03,-1.45,1.34,0.48,Climate (27 ha)
+Precipitation,-0.02,-0.94,0.97,0.47,Climate (27 ha)
+Large tree density*perc. ponderosa,0.01,-0.10,0.13,0.41,Variable interactions
+Small tree density*perc. ponderosa,-0.01,-0.12,0.10,0.44,Variable interactions
+Small tree density*maximum temperature,-0.10,-1.22,1.13,0.42,Variable interactions
+Large tree density*maximum temperature,0.04,-0.99,1.15,0.47,Variable interactions
+Percent of landscape harvested*percent burned,0.02,-0.10,0.14,0.35,Variable interactions
+Temperature * precipitation,-0.52,-3.71,2.38,0.35,Variable interactions
