@@ -31,20 +31,20 @@ source(here("code",
 # Fix parallels -----------------------------------------------------------
 
 #hopefully the parallels issue gets fixed, but for now this if statement works
-# to set system preferences for jags to run with parallel
-if (Sys.getenv("RSTUDIO") == "1" && !nzchar(Sys.getenv("RSTUDIO_TERM")) && 
-    Sys.info()["sysname"] == "Darwin" && getRversion() >= "4.0.0") {
-  parallel:::setDefaultClusterOptions(setup_strategy = "sequential")
-}
-
+# # to set system preferences for jags to run with parallel
+# if (Sys.getenv("RSTUDIO") == "1" && !nzchar(Sys.getenv("RSTUDIO_TERM")) && 
+#     Sys.info()["sysname"] == "Darwin" && getRversion() >= "4.0.0") {
+#   parallel:::setDefaultClusterOptions(setup_strategy = "sequential")
+# }
+# 
 
 # Load GOF model ----------------------------------------------------------
 
 model <- readRDS(here("monsoon",
-                      "10_19_22",
+                      "8_24_23",
                       "egg_num",
                       "outputs",
-                      "egg_JAGS_model_GOF_10_19.RDS"))
+                      "egg_number_model_GOF_8_24.RDS"))
 
 # Load data ---------------------------------------------------------------
 
@@ -56,10 +56,10 @@ source(here("code",
             "01_egg_data_prep.R"))
 
 samples <- readRDS(here("monsoon",
-                        "10_19_22",
+                        "8_24_23",
                         "egg_num",
                         "outputs",
-                        "egg_JAGS_model_samples_10_19.RDS"))
+                        "egg_number_model_samples_8_24.RDS"))
 
 # Extract observed data from DF -------------------------------------------
 
@@ -111,7 +111,7 @@ mean <- y2 %>%
 
 summary(lm(mean$predicted ~ mean$observed))
 
-lb1 <- paste("R^2 == 0.19")
+lb1 <- paste("R^2 == 0.21")
 
 (ob_pre <- ggplot(mean, aes(x = observed, y = predicted)) +
     geom_abline(slope = 1, linetype = 2) +
@@ -158,7 +158,7 @@ m1 <- lm(residual ~ Project_ID,
          data = resid)
 summary(m1)
 
-siter <- paste("R^2 == 0.002")
+siter <- paste("R^2 == 0.01")
 (resid_site <- ggplot(resid, aes(x = Project_ID, y = residual)) +
     geom_boxplot() +
     #geom_jitter(height = 0) +

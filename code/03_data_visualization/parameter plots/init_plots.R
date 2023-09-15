@@ -34,16 +34,16 @@ source(here::here("code",
 # Load model -------------------------------------------------------------
 
 init_sum <- readRDS(here("monsoon",
-                        "10_19_22",
-                        "initiation",
+                        "8_24_23",
+                        "init",
                         "outputs",
-                        "initiation_temp_JAGS_model_summary_10_19.RDS"))
+                        "init_model_summary_8_24.RDS"))
 
 init_samp <- readRDS(here("monsoon",
-                     "10_19_22",
-                     "initiation",
+                     "8_24_23",
+                     "init",
                      "outputs",
-                     "initiation_temp_JAGS_model_samples_10_19.RDS"))
+                     "init_model_samples_8_24.RDS"))
 
 # Load data summary -------------------------------------------------------
 
@@ -76,129 +76,145 @@ init_d2 <- init_d %>%
                               p == 0.05 ~ "p = 0.05",
                               TRUE ~ "ns"))%>%
   mutate(p_cat = case_when(p <= 0.05 ~ "s",
-                           TRUE ~ "ns"))
+                           TRUE ~ "ns")) 
 
-(overall_init <- ggplot(init_d2, 
-                         aes(x = parameter, y = beta_50, color = p_cat)) +
-    geom_point(size =2) +
-    geom_errorbar(aes(ymin = beta_lower, ymax = beta_upper), size = 1, width = 0.2) +
-    geom_hline(yintercept = 0, linetype = 2) +
-    scale_color_manual(values = c("black", "#BAE4BC")) +
-    labs(y = "Covariate estimate \n (posterior median and 95% BCI)",
-         x = "Covariate")+
-    coord_flip() +
-    theme(strip.text.y.left = element_text(angle = 0)) +
-    facet_grid(category ~ ., 
-               scales = "free_y", 
-               space = "free_y") +
-    theme(strip.text.y = element_text(angle = 0),
-          legend.position = 'none',
-          strip.background = element_rect(fill = "white")))
+init_exp <- init_d2 %>%
+  dplyr::select(parameter, beta_50, beta_lower, beta_upper, p, category)
 
-
-ggsave(plot = overall_init,
-       filename = 'init_all_plot.pdf',
-       path = here("pictures", "Rfigures", "initiation"),
-       width = 8, height = 4,
-       units = "in")
+write.csv(init_exp, 
+          file = here('data_outputs', '04_paper_tables',
+                      'init_summary.csv'),
+          row.names = F)
 
 
 # Individual parameters ---------------------------------------------------
-#b5-Tmax Ant, b9 - LandHarvested
-
-
-b0.year <- as.data.frame(init_mod$quantiles) %>%
-  rownames_to_column(var = "parameter") %>%
-  filter(str_detect(parameter, "b0.year")) 
-
-b0.year %>%
-  mutate(parameter = factor(parameter, levels = c("b0.year[1]", "b0.year[2]", "b0.year[3]",
-                                        "b0.year[4]", "b0.year[5]","b0.year[6]",
-                                        "b0.year[7]", "b0.year[8]", "b0.year[9]",
-                                        "b0.year[10]"))) %>%
-  ggplot(aes(x = parameter, y =`50%`)) +
-  geom_point() +
-  geom_errorbar(aes(ymin = `2.5%`, ymax = `97.5%`)) +
-  geom_hline(yintercept = 0)
-
-
-#b4-Tmax Ant, b8 - LandHarvested, 
+#b4 TmaxAnt, b11
+ 
 # Landscape harvested -----------------------------------------------------
-#b8 - LandHarvested
+#b11 - LandHarvested
 #need to add CI to these plots
-t <- scale_df(x = init_data$a1000_Ha,
+ha <- scale_df(x = init_data$a1000_Ha,
               length = 20,
               name = "Harvest")
 
-lharvest_a <- lognormal_predicted(mod = init_sum,
-                 beta = init_samp$`b[8]`,
-                 metadf = t,
-                 varS = varS,
-                 var = "Harvest",
-                 color = "#BAE4BC")
+b0 <- as.data.frame(init_sum$quantiles) %>%
+  rownames_to_column(var = "parm") %>%
+  filter(parm == "b0") %>%
+  dplyr::select(`50%`) %>%
+  as_vector()
+
+blHa <- as.data.frame(init_sum$quantiles) %>%
+  rownames_to_column(var = "parm") %>%
+  filter(parm == "b[11]") %>%
+  dplyr::select(`50%`) %>%
+  as_vector()
+
+regHa <- ha %>%
+  mutate(reg = b0 + blHa*varS,
+         exp_reg = exp(reg))
+
+(lharvest_a <- ggplot() +
+  geom_point(data = init_data, aes(x = a1000_Ha, y = Init_day),
+             fill = "#BAE4BC", color = "black", shape = 21, alpha = 0.5) +
+  geom_line(data = regHa, aes(x = Harvest, y = exp_reg),
+            linewidth = 1.5, color = "black") +
+  geom_line(data = regHa, aes(x = Harvest, y = exp_reg), 
+            color = "#BAE4BC", linewidth = 1) +
+  labs(x = "Percent landscape harvested",
+       y = "Nest initation date (Julian date)"))
 
 
-lharvest_b <- ggplot(init_data, aes(x = a1000_Ha)) +
-  geom_boxplot(fill =  "#BAE4BC") +
-  labs(x = "Percent landscape harvested") +
-  theme(axis.title.y = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.text.y = element_blank())
-# 
-(init_lharvest_plot <- lharvest_a/lharvest_b +
-    plot_layout(heights = c(4, 1)))
-
-ggsave(plot = init_lharvest_plot,
-       filename = 'init_lharvest.pdf',
-       path = here("pictures", "Rfigures", "initiation"),
-       width = 3.5, height = 3.5,
-       units = "in")
+# ggsave(plot = lharvest_a,
+#        filename = 'init_lharvest.pdf',
+#        path = here("pictures", "Rfigures", "initiation"),
+#        width = 3.5, height = 3.5,
+#        units = "in")
 
 # Temperature -------------------------------------------------------------
 
+#pull out medians of weights as vector
+#make climate a matrix of temp lags
+#multiply each by the weight and take the sum for each row (observation)
+#it would be a "monthly weighted z-score"
+#beta for temp
+blT <- as.data.frame(init_sum$quantiles) %>%
+  rownames_to_column(var = "parm") %>%
+  filter(parm == "b[4]") %>%
+  dplyr::select(`50%`) %>%
+  as_vector()
+
+#get temparutres on scaled scale
 temp_temp <- init_data %>%
+  dplyr::select(Nest_ID, Tmax:Tmax_l9) %>% #adjust if needed
   pivot_longer(Tmax:Tmax_l9,
                names_to = "lag",
-               values_to = "Tmax") 
+               values_to = "temp") %>%
+  mutate(temp = scale(temp)) %>%
+  pivot_wider(names_from = "lag",
+              values_from = "temp") %>%
+  dplyr::select(-Nest_ID) %>%
+  as.matrix()
 
-
-temp <- scale_df(temp_temp$Tmax,
-                 name = "Temperature",
-                 length = 20)
-
-
-temp_a <- lognormal_predicted(mod = init_sum,
-                               beta = init_samp$`b[4]`,
-                               metadf = temp,
-                               varS = varS,
-                               var = 'Temperature',
-                           color =  "#BAE4BC")
-
-
-temp_b <- init_data %>%
+#make scaled data long format to get mean and sd
+tmaxscale <- init_data %>%
+  dplyr::select(Nest_ID, Tmax:Tmax_l9) %>% #adjust if needed
   pivot_longer(Tmax:Tmax_l9,
                names_to = "lag",
-               values_to = "Tmax") %>%
-  ggplot( aes(x = Tmax)) +
-  geom_boxplot(fill =  "#BAE4BC") +
-  labs(x = "Maximum temperature") +
-  theme(axis.title.y = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.text.y = element_blank())
-# 
-(init_temp_plot <- temp_a/temp_b +
-    plot_layout(heights = c(4, 1)))
+               values_to = "temp") 
 
-ggsave(plot = init_temp_plot,
-       filename = 'init_temp_all.pdf',
-       path = here("pictures", "Rfigures", "initiation"),
-       width = 3.5, height = 3.5,
-       units = "in")
+#get mean and SD of OG data to back-transform stuff
+mean <- mean(tmaxscale$temp)
+sd <- sd(tmaxscale$temp)
 
-weight <- as.data.frame(init_sum$statistics) %>%
+#get weights per month
+t_wt <- as.data.frame(init_sum$quantiles) %>%
   rownames_to_column(var = "parameter") %>%
   filter(str_detect(parameter, "wA")) %>%
-  dplyr::select(Mean)
+  dplyr::select(`50%`) %>%
+  as_vector()
+
+#get tmax dataset
+regT <- init_data %>%
+  dplyr::select(Nest_ID, Init_day, Tmax:Tmax_l9)
+
+#multiply months by their weights
+regT$TAnt <- apply(temp_temp, MARGIN = 1, FUN = function(x){sum(x*t_wt)})
+
+#revert Tmax to OG data scale
+regT <- regT %>%
+  dplyr::select(TAnt, Init_day) %>%
+  mutate(Tmax = TAnt*sd + mean)
+
+#regression prediction for Temperature
+regT <- regT %>%
+  mutate(reg = b0 + blT*TAnt,
+         exp_reg = exp(reg))
+# xscaled = (x – x̄) / s
+# xscaled*sd + mean = x
+xlab <-  expression("Weighted maximum temperature " ( degree*C))
+
+(temp_a <- ggplot(regT) +
+    geom_point(aes(x = Tmax, y = Init_day),
+               fill = "#BAE4BC", color = "black", shape = 21, alpha = 0.5) +
+    geom_line(aes(x = Tmax, y = exp_reg),
+              linewidth = 1.5, color = "black") +
+    geom_line(aes(x = Tmax, y = exp_reg), 
+              color = "#BAE4BC", linewidth = 1) +
+  labs(x = xlab,
+       y = "Nest initation date (Julian date)"))
+
+# ggsave(plot = temp_a,
+#        filename = 'init_temperature.pdf',
+#        path = here("pictures", "Rfigures", "initiation"),
+#        width = 3.5, height = 3.5,
+#        units = "in")
+# Temp weights ------------------------------------------------------------
+
+
+weight <- as.data.frame(init_sum$quantiles) %>%
+  rownames_to_column(var = "parameter") %>%
+  filter(str_detect(parameter, "wA")) %>%
+  dplyr::select(`50%`)
 
 weight_low <- as.data.frame(init_sum$quantiles) %>%
   rownames_to_column(var = "parameter") %>%
@@ -210,31 +226,47 @@ weight_high <- as.data.frame(init_sum$quantiles) %>%
   filter(str_detect(parameter, "wA")) %>%
   dplyr::select(`97.5%`)
 
-weight_med <- as.data.frame(init_sum$quantiles) %>%
-  rownames_to_column(var = "parameter") %>%
-  filter(str_detect(parameter, "wA")) %>%
-  dplyr::select(`50%`)
 
 weights <- as.data.frame(cbind(lag = months <- c(1:10),
 weight = weight,
 weight_l = weight_low,
 weight_h = weight_high,
-weight_m = weight_med,
-months = c("May", "April", "March", "February",
-           "January", "December", "November", "October",
-           "September", "August"))) 
+months = c("(May) 1", "(Apr) 2", "(Mar) 3", "(Feb) 4",
+           "(Jan) 5", "(Dec) 6", "(Nov) 7", "(Oct) 8",
+           "(Sep) 9", "(Aug) 10"))) 
 
-(temp_weights <- ggplot(weights, aes(x = reorder(months, -lag), y = Mean)) +
+(temp_weights <- ggplot(weights, aes(x = reorder(months, lag), y = `50%`)) +
+  geom_hline(yintercept = 0.1, linetype = 2) +
   geom_point() +
   geom_errorbar(aes(ymin = `2.5%`, ymax = `97.5%`), width = 0.2) +
-  labs(x = "Month",
-       y = "Relative effect on nest initiation day") +
+  labs(x = "Months before nesting season",
+       y = "Temperature importance weight") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)))
 
-ggsave(plot = temp_weights,
-       filename = 'temp_weights.pdf',
+# ggsave(plot = temp_weights,
+#        filename = 'temp_weights.pdf',
+#        path = here("pictures", "Rfigures", "initiation"),
+#        width = 3.25, height = 3.35,
+#        units = "in")
+
+
+# Patchwork? --------------------------------------------------------------
+
+initplots <- lharvest_a + temp_a + temp_weights +
+  plot_annotation(tag_levels = "A")
+
+ggsave(plot = initplots,
+       filename = 'init_plots.pdf',
        path = here("pictures", "Rfigures", "initiation"),
-       width = 3.25, height = 3.35,
+       width = 10, 
+       height = 3.35,
+       units = "in")
+
+ggsave(plot = initplots,
+       filename = 'init_plots.jpeg',
+       path = here("pictures", "Rfigures", "initiation"),
+       width = 10, 
+       height = 3.35,
        units = "in")
 
 # Parameter values for text in paper --------------------------------------

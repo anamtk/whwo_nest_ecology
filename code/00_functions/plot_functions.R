@@ -434,8 +434,8 @@ lognormal_predicted <- function(mod, beta, metadf, varS, var, color){
 
     
       plot <- ggplot(sum_df, aes(x = .data[[var]], y = exp(median))) +
-        geom_ribbon(aes(ymin = exp(LCI), ymax = exp(UCI)), alpha = 0.5,
-                    fill = color) +
+        #geom_ribbon(aes(ymin = exp(LCI), ymax = exp(UCI)), alpha = 0.5,
+        #            fill = color) +
         geom_line(size = 1.15, color = "black") +
         geom_line(size = 1, color = color) +
         labs(y = "Nest initation day (Julian date)") +

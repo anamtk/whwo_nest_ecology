@@ -82,6 +82,7 @@ pwaic_p <- sum(p_sum$statistics[1:330, 2]^2)
 
 # DIC ---------------------------------------------------------------------
 
+#not as good for hierarchical models
 model_init_t$DIC
 model_init_p$DIC
 

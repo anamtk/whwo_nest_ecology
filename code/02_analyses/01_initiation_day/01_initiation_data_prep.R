@@ -142,6 +142,10 @@ PPT <- init %>%
 ForestCV <- as.vector(scale(init$a1000_areacv))
 ForestProx <- as.vector(scale(init$a1000_proxmn2))
 Contag <- as.vector(scale(init$a1000_contag))
+LPI <- as.vector(scale(init$a1000_lpi))
+NumOpen <- as.vector(scale(init$a1000_np1))
+NumPatches <- as.vector(scale(init$a1000_np))
+MeanForestPatchSz <- as.vector(scale(init$a1000_areamn2))
 LandHa <- as.vector(scale(init$a1000_Ha))
 LandBu <- as.vector(scale(init$a1000_RxBu))
 
@@ -174,6 +178,10 @@ all_data <- list(n.nests = n.nests,
                  ForestCV = ForestCV,
                  ForestProx = ForestProx,
                  Contag = Contag,
+                 LPI = LPI,
+                 NumOpen = NumOpen,
+                 NumPatches = NumPatches,
+                 MeanForestPatchSz = MeanForestPatchSz,
                  LandHa = LandHa,
                  LandBu = LandBu,
                  n.lag = n.lag,

@@ -35,10 +35,10 @@ source(here("code",
 # GOF model ---------------------------------------------------------------
 
 model <- readRDS(here("monsoon",
-                      "10_19_22",
-                      "nestling_survival",
+                      "8_24_23",
+                      "nestling",
                       "outputs",
-                      "nestling_survival_model_GOF_10_19.RDS"))
+                      "nestling_survival_model_GOF_8_24.RDS"))
 
 # Load data ---------------------------------------------------------------
 
@@ -49,10 +49,10 @@ source(here("code",
             "01_nestling_data_prep.R"))
 
 samples <- readRDS(here("monsoon",
-                        "10_19_22",
-                        "nestling_survival",
+                        "8_24_23",
+                        "nestling",
                         "outputs",
-                        "nestling_survival_model_samples_10_19.RDS"))
+                        "nestling_survival_model_samples_8_24.RDS"))
 
 # Extract observed data from DF -------------------------------------------
 
@@ -109,7 +109,7 @@ mean <- y2 %>%
 
 summary(lm(mean$predicted ~ mean$observed))
 
-lb1 <- paste("R^2 == 0.75")
+lb1 <- paste("R^2 == 0.76")
 
 mean$density <- get_density(mean$observed, mean$predicted, n = 100)
 
@@ -160,7 +160,7 @@ m1 <- lm(residual ~ Project_ID,
          data = resid)
 summary(m1)
 
-siter <- paste("R^2 == 0.002")
+siter <- paste("R^2 == 0.006")
 (resid_site <- ggplot(resid, aes(x = Project_ID, y = residual)) +
     geom_boxplot() +
     #geom_jitter(height = 0) +

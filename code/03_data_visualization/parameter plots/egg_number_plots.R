@@ -38,10 +38,10 @@ source(here::here("code",
 # Load model -------------------------------------------------------------
 
 egg_num <- readRDS(here("monsoon",
-                        "10_19_22",
+                        "8_24_23",
                         "egg_num",
                         "outputs",
-                        "egg_JAGS_model_summary_10_19.RDS"))
+                        "egg_number_model_summary_8_24.RDS"))
 
 # Load data summary -------------------------------------------------------
 
@@ -71,29 +71,38 @@ egg_n2 <- egg_n %>%
   mutate(p_cat = case_when(p <= 0.05 ~ "s",
                            TRUE ~ "ns"))
 
-(overall_egg_n <- ggplot(egg_n2, 
-       aes(x = parameter, y = beta_50, color = p_cat)) +
-  geom_point(size =2) +
-  geom_errorbar(aes(ymin = beta_lower, ymax = beta_upper), size = 1, width = 0.2) +
-  geom_hline(yintercept = 0, linetype = 2) +
-  scale_color_manual(values = c("black")) +
-    labs(y = "Covariate estimate \n (posterior median and 95% BCI)",
-         x = "Covariate")+
-  coord_flip() +
-  theme(strip.text.y.left = element_text(angle = 0)) +
-  facet_grid(category ~ ., 
-             scales = "free_y", 
-             space = "free_y") +
-  theme(strip.text.y = element_text(angle = 0),
-        legend.position = 'none',
-        strip.background = element_rect(fill = "white")))
 
+eggn_exp <- egg_n2 %>%
+  dplyr::select(parameter, beta_50, beta_lower, beta_upper, p, category)
 
-ggsave(plot = overall_egg_n,
-       filename = 'egg_n_all_plot.pdf',
-       path = here("pictures", "Rfigures", "egg_num"),
-       width = 8, height = 4,
-       units = "in")
+write.csv(eggn_exp, 
+          file = here('data_outputs', '04_paper_tables',
+                      'eggn_summary.csv'),
+          row.names = F)
+
+# (overall_egg_n <- ggplot(egg_n2, 
+#        aes(x = parameter, y = beta_50, color = p_cat)) +
+#   geom_point(size =2) +
+#   geom_errorbar(aes(ymin = beta_lower, ymax = beta_upper), size = 1, width = 0.2) +
+#   geom_hline(yintercept = 0, linetype = 2) +
+#   scale_color_manual(values = c("black")) +
+#     labs(y = "Covariate estimate \n (posterior median and 95% BCI)",
+#          x = "Covariate")+
+#   coord_flip() +
+#   theme(strip.text.y.left = element_text(angle = 0)) +
+#   facet_grid(category ~ ., 
+#              scales = "free_y", 
+#              space = "free_y") +
+#   theme(strip.text.y = element_text(angle = 0),
+#         legend.position = 'none',
+#         strip.background = element_rect(fill = "white")))
+# 
+# 
+# ggsave(plot = overall_egg_n,
+#        filename = 'egg_n_all_plot.pdf',
+#        path = here("pictures", "Rfigures", "egg_num"),
+#        width = 8, height = 4,
+#        units = "in")
 
 
 # Summaries ---------------------------------------------------------------

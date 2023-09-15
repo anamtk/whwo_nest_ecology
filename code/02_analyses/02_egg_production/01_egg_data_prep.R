@@ -147,6 +147,8 @@ PPT <- egg %>%
 ForestCV <- as.vector(scale(egg$a1000_areacv))
 ForestProx <- as.vector(scale(egg$a1000_proxmn2))
 Contag <- as.vector(scale(egg$a1000_contag))
+LPI <- as.vector(scale(egg$a1000_lpi))
+NumOpen <- as.vector(scale(egg$a1000_np1))
 LandHa <- as.vector(scale(egg$a1000_Ha))
 LandBu <- as.vector(scale(egg$a1000_RxBu))
 
@@ -179,6 +181,8 @@ all_data <- list(n.nests = n.nests,
                  ForestCV = ForestCV,
                  ForestProx = ForestProx,
                  Contag = Contag,
+                 LPI = LPI,
+                 NumOpen = NumOpen,
                  LandHa = LandHa,
                  LandBu = LandBu,
                  n.lag = n.lag,

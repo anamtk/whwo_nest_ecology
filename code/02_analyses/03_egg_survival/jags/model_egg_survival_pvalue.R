@@ -61,15 +61,20 @@ model{
       b[11]*PPT[i] +
       b[12]*PPT[i]^2 +
       b[13]*PForest[i] +
-      b[14]*NPatches[i] +
-      b[15]*LandBu[i] +
-      b[16]*LandHa[i] +
+      b[14]*NForestPatches[i] +
+      b[15]*ForestCV[i] +
+      b[16]*Contag[i] +
+      b[17]*LPI[i] +
+      b[18]*LandBu[i] +
+      b[19]*LandHa[i] +
       #interactions
-      b[17]*Trees2550[i]*PercPonderosa[i] +
-      b[18]*Trees50[i]*Tmax[i] +
-      b[19]*Trees2550[i]*Tmax[i] +
-      b[20]*LandHa[i]*LandBu[i] +
-      b[21]*Tmax[i]*PPT[i]
+      b[20]*Trees2550[i]*PercPonderosa[i] +
+      #REmoved because of being driven by extreme values
+      #b[21]*Trees50[i]*PercPonderosa[i] +
+      b[21]*Trees50[i]*Tmax[i] +
+      b[22]*Trees2550[i]*Tmax[i] +
+      b[23]*LandHa[i]*LandBu[i] +
+      b[24]*Tmax[i]*PPT[i]
     
     
     ## IMPUTING MISSING COVARIATE DATE
@@ -143,7 +148,7 @@ model{
   }
   b2SpeciesID[1] <- 0
   #continuous covariates
-  for(i in 3:21){
+  for(i in 3:24){
     b[i] ~ dnorm(0, 1E-2)
   }
   
@@ -187,7 +192,7 @@ model{
   z.b2 <- step(b2SpeciesID)
   
   #generate p-values for all continuous covariates
-  for(i in 3:21){
+  for(i in 3:24){
     z[i] <- step(b[i])
   }
 

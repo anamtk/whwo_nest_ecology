@@ -2,15 +2,16 @@ model{
   
   #-------------------------------------## 
   
-  ## Egg Production Model for White-headed Woodpecker
+  ## Nest initiation day Model for White-headed Woodpecker
   # Ana Miller-ter Kuile
   # April 1, 2022
   
-  # this is a count model for the # of eggs for whwo in 3CFLRP in Oregon and Idaho
+  # this is a normal model for the nest initiation day
+  # for whwo in 3CFLRP in Oregon and Idaho
   # the goal of this project is to understand how forest management and other
-  # environmental covariates at multiple scales influence egg production
+  # environmental covariates at multiple scales influence nesting ecology
   
-  # Egg production is a function of adult fitness, so covariates in this model
+  # Nest initiation is a function of adult fitness, so covariates in this model
   # include those local and landscape variables that influence adult fitness,
   # including antecedent climate variables that influence food availability prior
   # to the nesting period and also availability of foraging habitat on the landscape
@@ -20,53 +21,52 @@ model{
   # - crossed temporal hierarchy of nests occurring in the same year
   # - treatment covariates and other relevant environmental covariates
   ## at multiple scales
-  # - data follow a  poisson (count) distribution 
+  # - SAM model for antecedent temperature & precip variables
+  # - data follow a  normal distribution of log-transformed data
   # - relatively uninformative priors
   # - Bayesian p-value estimation for each covariate parameter
   
   #-------------------------------------## 
   
   #-------------------------------------## 
-  #Likelihood of egg productivity poison model
+  #Likelihood of nest initiation normal model
   #-------------------------------------## 
   
   for(i in 1:n.nests){
     
-    #data distribution follows a poisson with rate parameter lambda
-    y[i] ~ dpois(lambda[i])
+    #log-tranformed data distribution follows a normal distribution
+    ## with a mean mu and an overall variation for all data
+    y[i] ~ dnorm(mu[i], tau)
     
     #likelihood
-    log(lambda[i]) <- 
+    mu[i] <- 
       #transect hierarchy
       b0.transect[Transect.num[i]] +
       #crossed with year intercept
       b0.year[Year.num[i]] +
       
-      #Treatment covariates
-      b1[TrtID[i]] +
-      #nest scale
-      b[2]*InitDay[i] +
       #local scale
-      b[3]*Trees50[i] +
-      b[4]*Trees2550[i] +
-      b[5]*PercPonderosa[i] +
+      b[1]*Trees50[i] +
+      b[2]*Trees2550[i] +
+      b[3]*PercPonderosa[i] +
       #climate (antecedent)
-      b[6]*TmaxAnt[i] +
-      b[7]*PPTAnt[i] +
+      b[4]*TmaxAnt[i] +
+      b[5]*PPTAnt[i] +
       #landscape scale
-      b[8]*ForestCV[i] +
-      b[9]*Contag[i] +
-      b[10]*LPI[i] +
-      b[11]*NumOpen[i] +
-      b[12]*LandHa[i] +
-      b[13]*LandBu[i] +
+      b[6]*ForestCV[i] +
+      b[7]*Contag[i] +
+      b[8]*LPI[i] +
+      b[9]*NumPatches[i] +
+      b[10]*MeanForestPatchSz[i] +
+      b[11]*LandHa[i] +
+      b[12]*LandBu[i] +
       #interactions
-      b[14]*Trees50[i]*PercPonderosa[i] +
-      b[15]*Trees2550[i]*PercPonderosa[i] +
-      b[16]*TmaxAnt[i]*Trees2550[i] +
-      b[17]*TmaxAnt[i]*Trees50[i] +
-      b[18]*LandHa[i]*LandBu[i] +
-      b[19]*TmaxAnt[i]*PPTAnt[i]
+      b[13]*Trees50[i]*PercPonderosa[i] +
+      b[14]*Trees2550[i]*PercPonderosa[i] +
+      b[15]*TmaxAnt[i]*Trees2550[i] +
+      b[16]*TmaxAnt[i]*Trees50[i] +
+      b[17]*LandHa[i]*LandBu[i] +
+      b[18]*TmaxAnt[i]*PPTAnt[i]
     
     #summing the antecedent values
     TmaxAnt[i] <- sum(TmaxTemp[i,]) #summing across the total number of antecedent months
@@ -85,26 +85,39 @@ model{
     Trees2550[i] ~ dnorm(mu.t25, tau.t25)
     Trees50[i] ~ dnorm(mu.t50, tau.t50)
     PercPonderosa[i] ~ dnorm(mu.pp, tau.pp)
-    InitDay[i] ~ dnorm(mu.init, tau.init)
     
     for(t in 1:n.lag){
       Tmax[i,t] ~ dnorm(mu.tmp[t], tau.tmp[t])
       PPT[i,t] ~ dnorm(mu.ppt[t], tau.ppt[t])
     }
     
-    
     #-------------------------------------## 
     # Goodness of fit parameters ###
     #-------------------------------------##
     
     #replicated data
-    yrep[i] ~ dpois(lambda[i])
+    yrep[i] ~ dnorm(mu[i], tau)
     
     #residuals
-    resid[i] <- y[i] - lambda[i]
+    resid[i] <- y[i] - mu[i]
     
+    #-------------------------------------## 
+    # Model selection parameters ###
+    #-------------------------------------##
+    
+    #WAIC
+    lpd[i] <- logdensity.norm(y[i], mu[i], tau)
+    pd[i] <- exp(lpd[i])
+    
+    #Dinf
+    sqdiff[i] <- pow(yrep[i] - y[i], 2)
   }
   
+  #-------------------------------------## 
+  # Model selection parameters ###
+  #-------------------------------------##
+  #Dinf
+  Dsum <- sum(sqdiff[])
   
   #-------------------------------------## 
   # Priors ###
@@ -117,9 +130,9 @@ model{
   }
   
   #for every year but the last one:
-  for(y in 1:(n.years-1)){
-    b0.year[y] ~ dnorm( 0, tau.year)
-  }
+   for(y in 1:(n.years-1)){
+     b0.year[y] ~ dt( 0, tau.year, 2)
+   }
   #set the last year to be the -sum of all other years so the 
   # overall fo all year levels == 0
   b0.year[n.years] <- -sum(b0.year[1:(n.years-1)])
@@ -131,19 +144,15 @@ model{
   
   tau.transect <- 1/pow(sig.transect,2)
   tau.year <- 1/pow(sig.year,2)
+ 
+  #overall variance
+  tau ~ dgamma(0.001, 0.001)
+  sig <- 1/tau
   
   #PRIORS FOR COVARIATES
   
-  #Categorical variables
-  #ensure b[1,1] has most observations
-  for(tt in 2:n.trt){
-    b1[tt] ~ dnorm(0, 1E-2)
-  }
-  
-  b1[1] <- 0
-  
   #for all continuous b's:
-  for(i in 2:19){
+  for(i in 1:18){
     b[i] ~ dnorm(0, 1E-2) #relatively uninformative priors
   }
   
@@ -166,7 +175,6 @@ model{
   }
   
   
-  
   #PRIORS FOR IMPUTING MISSING DATA
   #Priors for mean and tau of missing covariates in the model
   mu.t25 ~ dunif(-10, 10)
@@ -178,9 +186,6 @@ model{
   mu.pp ~ dunif(-10, 10)
   sig.pp ~ dunif(0, 20)
   tau.pp <- pow(sig.pp, -2)
-  mu.init ~ dunif(-10, 10)
-  sig.init ~ dunif(0, 20)
-  tau.init <- pow(sig.init, -2)
   
   # Priors for parameters in the Temp missing data model:
   for(t in 1:n.lag){
@@ -204,11 +209,8 @@ model{
   # (high mean posterior value), mostly negative (low mean posterior value)
   # or somewhree in the middle (often 0, so 0.5 mean posterior)
   
-  #generates per level of categorical variables
-  z.b1 <- step(b1)
-  
   #generate p-values for all continuous covariates
-  for(i in 2:19){
+  for(i in 1:18){
     z[i] <- step(b[i])
   }
   

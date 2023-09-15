@@ -34,10 +34,10 @@ source(here::here("code",
 # Load model -------------------------------------------------------------
 
 init_mod <- readRDS(here("monsoon",
-                        "10_19_22",
-                        "initiation",
+                        "8_24_23",
+                        "init",
                         "outputs",
-                        "initiation_temp_JAGS_model_summary_10_19.RDS"))
+                        "init_model_summary_8_24.RDS"))
 
 # Prep model for plotting ------------------------------------------------
 
@@ -78,31 +78,36 @@ init_ps <- as.data.frame(init_mod$statistics) %>%
 init_df <- init_data %>%
   left_join(init_ps, by = "parameter") %>%
   filter(parameter != 'b1[1]') %>%
-  mutate(category = case_when(parameter %in% c("b[8]",
-                                               "b[9]") ~ "Landscape management (314 ha)",
-                              parameter %in% c('b[1]', 'b[2]', 
+  mutate(category = case_when(parameter %in% c('b[1]', 'b[2]',
                                                'b[3]') ~ "Local habitat (0.4 ha)",
-                              parameter %in% c("b[4]") ~ "Climate (27 ha)",
-                              parameter %in% c("b[5]", "b[6]",
-                                               "b[7]") ~ "Landscape habitat (314 ha)",
-                              parameter %in% c("b[10]", "b[11]",
-                                               "b[12]", "b[13]",
-                                               "b[14]") ~ "Variable interactions",
+                              parameter %in% c("b[4]", "b[5]") ~ "Climate (27 ha)",
+                              parameter %in% c("b[6]", "b[7]",
+                                               "b[8]", "b[9]",
+                                               'b[10]') ~ "Landscape habitat (314 ha)",
+                              parameter %in% c("b[11]",
+                                               "b[12]") ~ "Landscape management (314 ha)",
+                              parameter %in% c("b[13]", "b[14]",
+                                               "b[15]", "b[16]",
+                                               "b[17]", 'b[18]') ~ "Variable interactions",
                               TRUE~ NA_character_)) %>%
   mutate(parameter = case_when(parameter == "b[1]" ~ "Large tree density",
                                parameter == "b[2]" ~ "Small tree density",
                                parameter == "b[3]" ~ "Percent ponderosa forest",
                                parameter == "b[4]" ~ "Maximum temperature",
-                               parameter == "b[5]" ~ "Forest patch size coeff. variation",
-                               parameter == "b[6]" ~ "Proximity of forest patches",
+                               parameter == "b[5]" ~ "Precipitation",
+                               parameter == "b[6]" ~ "Forest patch size coeff. variation",
                                parameter == "b[7]" ~ "Contagion index",
-                               parameter == "b[8]" ~ "Percent of landscape harvested",
-                               parameter == "b[9]" ~ "Percent of landscape burned",
-                               parameter == "b[10]" ~ "Large tree density*perc. ponderosa",
-                               parameter == "b[11]" ~ "Small tree density*perc. ponderosa",
-                               parameter == "b[12]"~ "Small tree density*maximum temperature",
-                               parameter == "b[13]" ~ "Large tree density*maximum temperature",
-                               parameter == "b[14]" ~ "Percent of landscape harvested*percent burned",
+                               parameter == "b[8]" ~ "Largest patch index",
+                               parameter == "b[9]" ~ "Number of patches",
+                               parameter == 'b[10]' ~ "Mean forest patch size",
+                               parameter == "b[11]" ~ "Percent of landscape harvested",
+                               parameter == "b[12]" ~ "Percent of landscape burned",
+                               parameter == "b[13]" ~ "Large tree density*perc. ponderosa",
+                               parameter == "b[14]" ~ "Small tree density*perc. ponderosa",
+                               parameter == "b[15]"~ "Small tree density*maximum temperature",
+                               parameter == "b[16]" ~ "Large tree density*maximum temperature",
+                               parameter == "b[17]" ~ "Percent of landscape harvested*percent burned",
+                               parameter == "b[18]" ~ "Temperature * Precipitation",
                                TRUE ~ parameter)) %>%
   rename("beta_lower" = "2.5%",
           "beta_50" = "50%",

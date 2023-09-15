@@ -28,61 +28,19 @@ for(i in package.list){library(i, character.only = T)}
 
 #hopefully the parallels issue gets fixed, but for now this if statement works
 # to set system preferences for jags to run with parallel
-if (Sys.getenv("RSTUDIO") == "1" && !nzchar(Sys.getenv("RSTUDIO_TERM")) && 
-    Sys.info()["sysname"] == "Darwin" && getRversion() >= "4.0.0") {
-  parallel:::setDefaultClusterOptions(setup_strategy = "sequential")
-}
+# if (Sys.getenv("RSTUDIO") == "1" && !nzchar(Sys.getenv("RSTUDIO_TERM")) && 
+#     Sys.info()["sysname"] == "Darwin" && getRversion() >= "4.0.0") {
+#   parallel:::setDefaultClusterOptions(setup_strategy = "sequential")
+# }
 
 
 # Load Data ---------------------------------------------------------------
 
 #load the formatted data for the JAGS model
-source(here("code", 
-            "02_analyses",
-            "03_egg_survival",
-            "01_egg_surv_data_prep.R"))
-
-
-# Compile data ------------------------------------------------------------
-
-data <- list(#overall values for likelihood loops
-                n.nests = n.nests,
-                #Random variables
-                Transect.num = Transect.num,
-                Year.num = Year.num,
-                Forest.num = Forest.num,
-                #Treatment covariate
-                TreatmentID = TreatmentID,
-                TrtTime = TrtTime,
-                NTrt = NTrt,
-                #Nest-level
-                NestHt = NestHt,
-                CosOrientation = CosOrientation,
-                SpeciesID = SpeciesID,
-                InitDay = InitDay,
-                #local-level
-                Trees50 = Trees50,
-                Trees2550 = Trees2550,
-                PercPonderosa = PercPonderosa,
-                #landscape-level
-                Tmax = Tmax,
-                PPT = PPT,
-                LandHa = LandHa,
-                LandBu = LandBu,
-                PForest = PForest,
-                NPatches = NPatches,
-                #Data
-                y = y,
-                N.eggs = N.eggs,
-                N.nestlings = N.nestlings,
-                #numbers for prior distribution loops
-                n.transects = n.transects,
-                n.years = n.years,
-                n.trt = n.trt,
-                n.species = n.species,
-                n.forests = n.forests,
-                n.times = n.times)
-
+data <- readRDS(here("data_outputs",  
+                     "02_monsoon",
+                     "model_input_data",
+                     "egg_survival_JAGS_input_data.RDS"))
 
 # Parameters to save ------------------------------------------------------
 
@@ -101,8 +59,6 @@ params <- c(#Random covariate betas
             'z.b2',
             'z'
                )
-
-
 # JAGS model --------------------------------------------------------------
 
 
@@ -137,6 +93,7 @@ parms <- c(#Random covariate betas
             'deviance'
           )
 
+mcmcplot(egg_surv_mod$samples, parms = parms)
 
 raf_egg_s <- raftery.diag(egg_surv_mod$samples)
 
@@ -170,7 +127,7 @@ raf_all %>%
 # A tibble: 1 × 3
 # iterations_90 iterations_95 iterations_max
 # <dbl>         <dbl>          <dbl>
-#   1          7191          9020         23124.
+#   1        7776.         10157         30295.
 
 bu1 <- raf_egg_s[[1]]$resmatrix[,1]
 bu2 <- raf_egg_s[[2]]$resmatrix[,1]
@@ -189,7 +146,7 @@ burn_all <- as.data.frame(cbind(names,
 burn_all %>%
   summarise(max_iterations = max(iterations, na.rm = T))
 
-#64
+#156
 
 # Get initials ------------------------------------------------------------
 b0.transect <- egg_surv_mod$mean$b0.transect

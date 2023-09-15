@@ -162,7 +162,10 @@ egg_s %>%
 LandHa <- as.vector(scale(egg_s$a1000_Ha))
 LandBu <- as.vector(scale(egg_s$a1000_RxBu))
 PForest <- as.vector(scale(egg_s$a1000_pland2))
-NPatches <- as.vector(scale(egg_s$a1000_np))
+NForestPatches <- as.vector(scale(egg_s$a1000_np))
+ForestCV <- as.vector(scale(egg_s$a1000_areacv2))
+Contag <- as.vector(scale(egg_s$a1000_contag))
+LPI <- as.vector(scale(egg_s$a1000_lpi))
 
 # response data -----------------------------------------------------------
 
@@ -200,7 +203,10 @@ all_data <- list(n.nests = n.nests,
                  LandHa = LandHa,
                  LandBu = LandBu,
                  PForest = PForest,
-                 NPatches = NPatches,
+                 NForestPatches = NForestPatches,
+                 ForestCV = ForestCV,
+                 Contag = Contag,
+                 LPI = LPI,
                  N.eggs = N.eggs,
                  N.nestlings = N.nestlings,
                  y = y)

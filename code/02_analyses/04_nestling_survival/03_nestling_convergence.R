@@ -37,8 +37,8 @@ source(here("code",
 # Load model output -------------------------------------------------------
 
 Rhat <- readRDS(here("monsoon",
-                       "10_19_22",
-                       "nestling_survival",
+                       "8_24_23",
+                       "nestling",
                        "outputs",
                        "nestling_survival_Rhat.RDS"))
 

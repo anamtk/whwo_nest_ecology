@@ -29,8 +29,8 @@ source(here("code",
 # Load model output -------------------------------------------------------
 
 Rhat <- readRDS(here("monsoon", 
-                     "10_19_22",
-                     "initiation",
+                     "8_24_23",
+                     "init",
                      "outputs",
                      "initiation_Rhat.RDS"))
 
@@ -41,7 +41,7 @@ Rhat <- readRDS(here("monsoon",
 parms <- c("b1", "b", "b0", 
            "sig.transect", "sig.year", 
            'sig', 'b0.year', 'b0.transect',
-           "wA",  "deviance")
+           "wA", 'wB', "deviance")
 
 
 Rhat <- Rhat[which(names(Rhat) %in% parms)]

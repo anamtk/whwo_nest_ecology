@@ -37,10 +37,10 @@ source(here("code",
 # GOF Model ---------------------------------------------------------------
 
 model <- readRDS(here("monsoon",
-                 "10_19_22",
-                 "egg_survival",
+                 "8_24_23",
+                 "egg_s",
                   "outputs",
-                 "egg_survival_model_GOF_10_19.RDS"))
+                 "egg_survival_model_GOF_8_24.RDS"))
 
 # Load data ---------------------------------------------------------------
 
@@ -51,10 +51,10 @@ source(here("code",
             "01_egg_surv_data_prep.R"))
 
 samples <- readRDS(here("monsoon",
-                        "10_19_22",
-                        "egg_survival",
+                        "8_24_23",
+                        "egg_s",
                         "outputs",
-                        "egg_survival_model_samples_10_19.RDS"))
+                        "egg_survival_model_samples_8_24.RDS"))
 
 # Extract observed data from DF -------------------------------------------
 
@@ -161,7 +161,7 @@ m1 <- lm(residual ~ Project_ID,
          data = resid)
 summary(m1)
 
-siter <- paste("R^2 == 0.01")
+siter <- paste("R^2 < 0.01")
 (resid_site <- ggplot(resid, aes(x = Project_ID, y = residual)) +
     geom_boxplot() +
     #geom_jitter(height = 0) +
@@ -233,6 +233,10 @@ pairs(emmeans(mod, 'Project_ID'))
            x = 3, y = 2.5,
            label = "*",
            size = 7) +
+    annotate(geom = "text",
+             x = 2, y = 2.5,
+             label = "*",
+             size = 7) +
   ylim(-2.5, 3))
   
 (eggs_resid <- resid_site + (transect_errors/transect_box) +
